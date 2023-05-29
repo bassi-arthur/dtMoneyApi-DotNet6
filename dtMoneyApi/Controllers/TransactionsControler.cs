@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace dtMoneyApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/transaction")]
     [ApiController]
     public class TransactionsControler : ControllerBase
     {
@@ -19,6 +19,7 @@ namespace dtMoneyApi.Controllers
         }
 
         [HttpGet]
+        [Route("list")]
         public async Task<ActionResult<List<Transaction>>> Get()
         {
             return Ok(await _context.Transactions.ToListAsync());
@@ -32,10 +33,11 @@ namespace dtMoneyApi.Controllers
             if (transaction.Result == null)
                 return BadRequest("Transaction not found.");
 
-            return Ok(transaction);
+            return Ok(await _context.Transactions.ToListAsync());
         }
 
         [HttpPost]
+        [Route("create")]
         public async Task<ActionResult<List<Transaction>>> AddTransaction(Transaction transaction)
         {
             _context.Transactions.Add(transaction);
@@ -45,6 +47,7 @@ namespace dtMoneyApi.Controllers
 
 
         [HttpPut]
+        [Route("update")]
         public async Task<ActionResult<List<Transaction>>> UpdateTransaction(Transaction request)
         {
             var transaction = await _context.Transactions.FindAsync(request.Id);
@@ -53,9 +56,10 @@ namespace dtMoneyApi.Controllers
                 return BadRequest("Transaction not found.");
 
             transaction.Id = request.Id;
-            transaction.Quantity = request.Quantity;
+            transaction.Amount = request.Amount;
             transaction.Title = request.Title;
             transaction.Type = request.Type;
+            transaction.Category = request.Category;
 
             await _context.SaveChangesAsync();
 
@@ -63,7 +67,8 @@ namespace dtMoneyApi.Controllers
 
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete()]
+        [Route("delete{id}")]
         public async Task<ActionResult<Transaction>> DeleteById(int id)
         {
             var transaction = _context.Transactions.FindAsync(id);

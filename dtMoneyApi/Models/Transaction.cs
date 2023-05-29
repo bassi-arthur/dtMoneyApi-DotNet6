@@ -4,7 +4,8 @@
     {
         public int Id { get; set; }
         public string Title { get; set; } = string.Empty;
-        public double Quantity { get; set; }
+        public double Amount { get; set; }
+        public string Category { get; set; }
         public TransactionType Type { get; set; }
         public DateTime CreatedAt { get; set; }
     }
